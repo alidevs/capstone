@@ -1,0 +1,47 @@
+---
+name: CD
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: self-hosted
+    strategy:
+      matrix:
+        nodes:
+          - 10.0.2.122
+          - 10.0.2.123
+
+    steps:
+      - name: Deploying to ${{ matrix.nodes }}
+        env:
+          SSH_KEY: ${{ secrets.SSH_KEY }}
+          SSH_USER: ${{ secrets.SSH_USER }}
+          DB_HOST: ${{ secrets.DB_HOST }}
+          DB_USER: ${{ secrets.DB_USER }}
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          DB_NAME: ${{ secrets.DB_NAME }}
+          REDIS_HOST: ${{ secrets.REDIS_HOST }}
+        run: |-
+          echo "$SSH_KEY" > /sshkey.pem
+          chmod 600 /sshkey.pem
+          eval "$(ssh-agent -s)"
+          ssh-add /sshkey.pem
+          mkdir -p ~/.ssh
+          ssh-keyscan -H "${{ matrix.nodes }}" >> ~/.ssh/known_hosts
+          ssh -o StrictHostKeyChecking=no -i /sshkey.pem "$SSH_USER"@"${{ matrix.nodes }}" <<EOF
+            docker stop \$(docker ps -a -q) &&
+            docker rm \$(docker ps -a -q) &&
+            docker pull alidevs/capstone-flask-app:latest &&
+            docker run -d \
+              -p 80:5000 \
+              -e DB_HOST="${DB_HOST}" \
+              -e DB_USER="${DB_USER}" \
+              -e DB_PASSWORD="${DB_PASSWORD}" \
+              -e DB_NAME="${DB_NAME}" \
+              -e REDIS_HOST="${REDIS_HOST}" \
+              alidevs/capstone-flask-app:latest
+          EOF
