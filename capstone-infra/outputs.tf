@@ -11,9 +11,9 @@ output "http_server_private_ips" {
 }
 
 output "mysql_private_ip" {
-  value = alicloud_db_instance.mysql.connection_string
+  value = alicloud_instance.mysql.private_ip
 }
 
 output "redis_private_ip" {
-  value = alicloud_kvstore_instance.redis.connection_domain
+  value = alicloud_instance.redis.private_ip
 }

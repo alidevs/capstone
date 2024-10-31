@@ -1,20 +1,31 @@
-resource "alicloud_kvstore_instance" "redis" {
-  db_instance_name = "ali-capstone-redis"
-  vswitch_id       = alicloud_vswitch.private.id
-  security_ips     = [var.private_subnet_cidr]
-  instance_type    = "Redis"
-  engine_version   = "5.0"
-  zone_id          = data.alicloud_zones.available.zones[0].id
-  instance_class   = "redis.master.small.default"
+resource "alicloud_instance" "redis" {
+  instance_name   = "ali-capstone-redis"
+  instance_type   = "ecs.g6.large"
+  image_id        = "ubuntu_24_04_x64_20G_alibase_20240812.vhd"
+  security_groups = [alicloud_security_group.private.id]
+  vswitch_id      = alicloud_vswitch.private.id
+
+  system_disk_category = "cloud_essd"
+  system_disk_size     = 40
+
+  user_data = base64encode(file("scripts/setup_redis.sh"))
+
+  instance_charge_type = "PostPaid"
+  internet_charge_type = "PayByTraffic"
 }
 
-resource "alicloud_db_instance" "mysql" {
-  instance_name    = "ali-capstone-mysql"
-  engine           = "MySQL"
-  engine_version   = "8.0"
-  instance_type    = "mysql.n2.medium.2c"
-  instance_storage = "20"
-  vswitch_id       = alicloud_vswitch.private.id
-  security_ips     = [var.private_subnet_cidr]
-  zone_id          = data.alicloud_zones.available.zones[0].id
+resource "alicloud_instance" "mysql" {
+  instance_name   = "ali-capstone-mysql"
+  instance_type   = "ecs.g6.large"
+  image_id        = "ubuntu_24_04_x64_20G_alibase_20240812.vhd"
+  security_groups = [alicloud_security_group.private.id]
+  vswitch_id      = alicloud_vswitch.private.id
+
+  system_disk_category = "cloud_essd"
+  system_disk_size     = 40
+
+  user_data = base64encode(file("scripts/setup_mysql.sh"))
+
+  instance_charge_type = "PostPaid"
+  internet_charge_type = "PayByTraffic"
 }

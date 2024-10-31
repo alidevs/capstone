@@ -5,6 +5,7 @@ provider "registry.terraform.io/hashicorp/alicloud" {
   version = "1.232.0"
   hashes = [
     "h1:9MFmeUGWgWV/qPForKWoHVojuz6fTV2zz+VyeZUYPN8=",
+    "h1:GIl69PmBd2wY4jf8yH6g0tXAR8wmV+i7BZB99zQbqxs=",
     "zh:2218f1d6df5df64b95e768d7534d6af6460ad1563a6aa221a1674ffb9eff1bdd",
     "zh:375919aab04f25c83cb068114accba40bcfff968a3d2225a41ac42096ab8e74c",
     "zh:63931914f18dbaa5106e5ded2c5ee7410d133078794d00cf4ac342f8a8c5dbf6",
