@@ -44,7 +44,7 @@ resource "alicloud_route_entry" "internet" {
   destination_cidrblock = "0.0.0.0/0"
   nexthop_type          = "NatGateway"
   nexthop_id            = alicloud_nat_gateway.main.id
-  
+
   depends_on = [
     alicloud_nat_gateway.main,
     alicloud_eip_association.nat
@@ -60,4 +60,11 @@ resource "alicloud_snat_entry" "private" {
   snat_table_id     = alicloud_nat_gateway.main.snat_table_ids
   source_vswitch_id = alicloud_vswitch.private.id
   snat_ip           = alicloud_eip.nat.ip_address
+}
+
+resource "alicloud_vswitch" "public_secondary" {
+  vswitch_name = "ali-capstone-public-subnet-secondary"
+  vpc_id       = alicloud_vpc.main.id
+  cidr_block   = "10.0.3.0/24"
+  zone_id      = data.alicloud_zones.available.zones[1].id
 }

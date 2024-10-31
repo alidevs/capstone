@@ -10,8 +10,15 @@ resource "alicloud_instance" "http_servers" {
   system_disk_category = "cloud_essd"
   system_disk_size     = 40
 
-  instance_charge_type = "PostPaid"
-  internet_charge_type = "PayByTraffic"
+  instance_charge_type       = "PostPaid"
+  internet_max_bandwidth_out = 0
+
+  key_name = alicloud_ecs_key_pair.bastion.key_pair_name
+
+  user_data = base64encode(templatefile("http-setup.tpl", {
+    redis_host = alicloud_instance.redis.private_ip,
+    mysql_host = alicloud_instance.mysql.private_ip
+  }))
 }
 
 resource "alicloud_instance" "bastion" {

@@ -1,5 +1,6 @@
 output "load_balancer_domain" {
-  value = alicloud_nlb_load_balancer.main.dns_name
+  value       = alicloud_nlb_load_balancer.main.dns_name
+  description = "The domain name of the load balancer"
 }
 
 output "bastion_public_ip" {
